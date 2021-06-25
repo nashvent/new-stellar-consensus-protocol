@@ -1,0 +1,24 @@
+{
+  "name": "new-stellar-consensus-protocol",
+  "version": "1.0.0",
+  "description": "New approach to Stellar Consensus Protocol",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nashvent/new-stellar-consensus-protocol.git"
+  },
+  "author": "Anibal Ventura",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nashvent/new-stellar-consensus-protocol/issues"
+  },
+  "homepage": "https://github.com/nashvent/new-stellar-consensus-protocol#readme",
+  "dependencies": {
+    "crypto-js": "^4.0.0",
+    "lodash": "^4.17.21"
+  }
+}
