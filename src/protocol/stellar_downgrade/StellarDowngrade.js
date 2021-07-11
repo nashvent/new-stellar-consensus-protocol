@@ -28,22 +28,22 @@ class StellarDowngrade {
     for (let counter = 0; counter < quantity; counter++) {
       const uuid = generateUUID();
       let witnesses_count = 0;
-      if(witnesses_count < MIN_WITNESSES_SIZE){
+      if (witnesses_count < MIN_WITNESSES_SIZE) {
         this.nodes.push(new StellarNode(uuid, 100)); // create default witness
         witnesses_count += 1;
       }
-      else{
+      else {
         this.nodes.push(new StellarNode(uuid));
       }
     }
   }
 
   nodeClassifier() {
-    for (let i = 0; i < nodes.length; i += quorumSize) {
-      const quorumSlice = nodes.slice(i, i + quorumSize);
-      this.quorumSlices.push(quorumSlice);
+    this.classifiedNodes = {};
+    for (let node of this.nodes) {
+      node.state = (node.stake >= this.threshold) ? "witness" : "candidate";
+      this.classifiedNodes[node.id] = node;
     }
-    
   }
 
   addNewBlock(data) {
@@ -75,25 +75,27 @@ class StellarDowngrade {
     // END TIME
 
     this.nodeClassifier();
-    let electedNodes = [];
-    for (let i = 0; i < this.validators.length; i += 1) {
-      // console.log("this.quorumSlices", this.quorumSlices);
-      const electedNode = this.validators[i].validateNodes(
-        this.quorumSlices[i]
-      );
-      // console.log("electedNode", electedNode);
-      electedNodes.push(electedNode);
+    let electedNodes = Object.assign({}, this.classifiedNodes);
+    while (Object.keys(electedNodes) > 1) {
+      let newNodes = {};
+      for (let key in electedNodes) {
+        let currentNode = electedNodes[key];
+        let electedNode = currentNode.voting(electedNodes);
+        newNodes[electedNode.id] = electedNode;
+      }
+      // Validate
+      electedNodes = Object.assign({}, newNodes);
     }
 
-    const validator = electedNodes[0];
-    const finalQuorum = electedNodes.slice(1, electedNodes.length);
-    const validatedNode = validator.validateNodes(finalQuorum);
+    // const validator = electedNodes[0];
+    // const finalQuorum = electedNodes.slice(1, electedNodes.length);
+    // const validatedNode = validator.validateNodes(finalQuorum);
 
     // TIME
     this.consensusTime.push(Date.now() - begin);
     // END TIME
 
-    return validatedNode;
+    return this.classifiedNodes[Object.keys(this.classifiedNodes)[0]];
   }
 
   toString() {

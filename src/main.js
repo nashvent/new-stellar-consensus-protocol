@@ -29,8 +29,8 @@ const {excecuteAndMonitoringProtocol} = require("./helpers/GeneralHelpers");
 
 
 //  Test config
-const secondsTest = [5];
-const nodesTest = [1000, 2000];
+const secondsTest = [60, 120, 180];
+const nodesTest = [1000, 2000, 3000, 4000, 5000];
 
 
 const stellarResult = {};

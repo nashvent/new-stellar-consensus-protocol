@@ -1,3 +1,5 @@
+const {randomInteger} = require("../../helpers/GeneralHelpers");
+
 class Node {
   block = null; // generate in the network
   state = ""; // witness | candidate
@@ -34,6 +36,16 @@ class Node {
       }
     }
     return segmentGroup[keyOfBigger][0]; // return NODE
+  }
+
+  voting(nodes){
+    let keys = Object.keys(nodes)
+    console.log("keys", keys.length);
+    let electedNode = null;
+    do {
+      electedNode = nodes[keys[randomInteger(0, keys.length)]];
+    } while (electedNode === null || electedNode.state !== "witness");
+    return electedNode;
   }
 
   downgrade(val){
