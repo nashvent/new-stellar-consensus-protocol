@@ -29,21 +29,21 @@ const {excecuteAndMonitoringProtocol} = require("./helpers/GeneralHelpers");
 
 
 //  Test config
-const secondsTest = [60, 120, 180];
+const secondsTest = [10, 20, 30];
 const nodesTest = [1000, 2000, 3000, 4000, 5000];
 
 
-const stellarResult = {};
+// const stellarResult = {};
 
-for(let second of secondsTest){
-    // console.log("+ seconds", second);
-    stellarResult[second.toString()] = {};
-    for(let nodesSize of nodesTest ){
-        // console.log("- nodesSize", nodesSize);
-        stellarResult[second.toString()][nodesSize.toString()] = excecuteAndMonitoringProtocol(Stellar, nodesSize, second);
-        // console.log(stellarResult[second.toString()][nodesSize.toString()]);
-    }
-}
+// for(let second of secondsTest){
+//     // console.log("+ seconds", second);
+//     stellarResult[second.toString()] = {};
+//     for(let nodesSize of nodesTest ){
+//         // console.log("- nodesSize", nodesSize);
+//         stellarResult[second.toString()][nodesSize.toString()] = excecuteAndMonitoringProtocol(Stellar, nodesSize, second);
+//         // console.log(stellarResult[second.toString()][nodesSize.toString()]);
+//     }
+// }
 
 
 const stellarDowngradeResult = {};
@@ -58,7 +58,7 @@ for(let second of secondsTest){
     }
 }
 
-fs.writeFileSync('results/stellar_downgrade_result_minuts.json', JSON.stringify(stellarDowngradeResult));
+fs.writeFileSync('results/stellar_downgrade_result_minuts2.json', JSON.stringify(stellarDowngradeResult));
 
 
 
