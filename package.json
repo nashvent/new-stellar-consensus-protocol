@@ -18,7 +18,11 @@
   },
   "homepage": "https://github.com/nashvent/new-stellar-consensus-protocol#readme",
   "dependencies": {
+    "anychart-nodejs": "^1.3.8",
+    "anychart": "8.3.0",
     "crypto-js": "^4.0.0",
+    "fs": "^0.0.1-security",
+    "jsdom": "^18.0.1",
     "lodash": "^4.17.21"
   }
 }
