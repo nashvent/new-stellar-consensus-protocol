@@ -4,8 +4,8 @@ const StellarDowngrade = require("./protocol/stellar_downgrade/StellarDowngrade"
 const {excecuteAndMonitoringProtocol} = require("./helpers/GeneralHelpers");
 
 //  Test config
-const secondsTest = [10,20,30,40,50,60,70,80,90,100];
-const nodesTest = [500, 1000, 2000, 3000, 4000, 5000];
+const secondsTest = [20];
+const nodesTest = [500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000, 16000,17000, 18000, 19000, 20000];
 
 const stellarDowngradeResult = {};
 
