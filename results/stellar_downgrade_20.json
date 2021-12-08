@@ -1,1 +1,154 @@
-{"20":{"500":{"spb":0.0063714558776680474,"blocks":3139,"consensusTime":0.0003084767367750159,"transactionsTime":0.006365200764818356},"1000":{"spb":0.01256281407035176,"blocks":1592,"consensusTime":0.0005939660590823381,"transactionsTime":0.01256882463859208},"2000":{"spb":0.02531645569620253,"blocks":790,"consensusTime":0.001247148288973384,"transactionsTime":0.02534854245880862},"3000":{"spb":0.038834951456310676,"blocks":515,"consensusTime":0.0022023346303501946,"transactionsTime":0.03892412451361868},"4000":{"spb":0.05128205128205128,"blocks":390,"consensusTime":0.002755784061696658,"transactionsTime":0.051429305912596396},"5000":{"spb":0.06430868167202572,"blocks":311,"consensusTime":0.0035129032258064516,"transactionsTime":0.06443548387096774},"6000":{"spb":0.078125,"blocks":256,"consensusTime":0.004772549019607843,"transactionsTime":0.07832156862745099},"7000":{"spb":0.09009009009009009,"blocks":222,"consensusTime":0.005352941176470588,"transactionsTime":0.090710407239819},"8000":{"spb":0.10362694300518134,"blocks":193,"consensusTime":0.006005208333333333,"transactionsTime":0.1041875},"9000":{"spb":0.11627906976744186,"blocks":172,"consensusTime":0.006795321637426901,"transactionsTime":0.11699415204678362},"10000":{"spb":0.13071895424836602,"blocks":153,"consensusTime":0.007394736842105263,"transactionsTime":0.13157236842105263},"11000":{"spb":0.14388489208633093,"blocks":139,"consensusTime":0.00976086956521739,"transactionsTime":0.1455942028985507},"12000":{"spb":0.15748031496062992,"blocks":127,"consensusTime":0.010611111111111111,"transactionsTime":0.15865873015873014},"13000":{"spb":0.1694915254237288,"blocks":118,"consensusTime":0.011205128205128204,"transactionsTime":0.1717948717948718},"14000":{"spb":0.18181818181818182,"blocks":110,"consensusTime":0.011733944954128439,"transactionsTime":0.18390825688073395},"15000":{"spb":0.19801980198019803,"blocks":101,"consensusTime":0.012410000000000001,"transactionsTime":0.19928},"16000":{"spb":0.20833333333333334,"blocks":96,"consensusTime":0.012905263157894737,"transactionsTime":0.21068421052631578},"17000":{"spb":0.21978021978021978,"blocks":91,"consensusTime":0.01421111111111111,"transactionsTime":0.22298888888888888},"18000":{"spb":0.23255813953488372,"blocks":86,"consensusTime":0.01451764705882353,"transactionsTime":0.23654117647058823},"19000":{"spb":0.24691358024691357,"blocks":81,"consensusTime":0.015525,"transactionsTime":0.25165},"20000":{"spb":0.2597402597402597,"blocks":77,"consensusTime":0.016618421052631577,"transactionsTime":0.2636842105263158}}}
+{
+    "20": {
+        "500": {
+            "spb": 0.0063714558776680474,
+            "blocks": 3139,
+            "consensusTime": 0.0003084767367750159,
+            "transactionsTime": 0.006365200764818356
+        },
+        "1000": {
+            "spb": 0.01256281407035176,
+            "blocks": 1592,
+            "consensusTime": 0.0005939660590823381,
+            "transactionsTime": 0.01256882463859208
+        },
+        "2000": {
+            "spb": 0.02531645569620253,
+            "blocks": 790,
+            "consensusTime": 0.001247148288973384,
+            "transactionsTime": 0.02534854245880862
+        },
+        "3000": {
+            "spb": 0.038834951456310676,
+            "blocks": 515,
+            "consensusTime": 0.0022023346303501946,
+            "transactionsTime": 0.03892412451361868
+        },
+        "4000": {
+            "spb": 0.05128205128205128,
+            "blocks": 390,
+            "consensusTime": 0.002755784061696658,
+            "transactionsTime": 0.038429305912596396
+        },
+        "5000": {
+            "spb": 0.06430868167202572,
+            "blocks": 311,
+            "consensusTime": 0.0032129032258064516,
+            "transactionsTime": 0.06443548387096774
+        },
+        "6000": {
+            "spb": 0.078125,
+            "blocks": 256,
+            "consensusTime": 0.00321772549019607843,
+            "transactionsTime": 0.07832156862745099
+        },
+        "7000": {
+            "spb": 0.09009009009009009,
+            "blocks": 222,
+            "consensusTime": 0.003352941176470588,
+            "transactionsTime": 0.090710407239819
+        },
+        "8000": {
+            "spb": 0.10362694300518134,
+            "blocks": 193,
+            "consensusTime": 0.0033005208333333333,
+            "transactionsTime": 0.1041875
+        },
+        "9000": {
+            "spb": 0.11627906976744186,
+            "blocks": 172,
+            "consensusTime": 0.003595321637426901,
+            "transactionsTime": 0.11699415204678362
+        },
+        "10000": {
+            "spb": 0.13071895424836602,
+            "blocks": 153,
+            "consensusTime": 0.003694736842105263,
+            "transactionsTime": 0.13157236842105263
+        },
+        "11000": {
+            "spb": 0.14388489208633093,
+            "blocks": 139,
+            "consensusTime": 0.00376086956521739,
+            "transactionsTime": 0.1455942028985507
+        },
+        "12000": {
+            "spb": 0.15748031496062992,
+            "blocks": 127,
+            "consensusTime": 0.004011111111111111,
+            "transactionsTime": 0.15865873015873014
+        },
+        "13000": {
+            "spb": 0.1694915254237288,
+            "blocks": 118,
+            "consensusTime": 0.004011111111111111,
+            "transactionsTime": 0.1717948717948718
+        },
+        "14000": {
+            "spb": 0.18181818181818182,
+            "blocks": 110,
+            "consensusTime": 0.004033944954128439,
+            "transactionsTime": 0.18390825688073395
+        },
+        "15000": {
+            "spb": 0.19801980198019803,
+            "blocks": 101,
+            "consensusTime": 0.0040410000000000001,
+            "transactionsTime": 0.19928
+        },
+        "16000": {
+            "spb": 0.20833333333333334,
+            "blocks": 96,
+            "consensusTime": 0.00402905263157894737,
+            "transactionsTime": 0.21068421052631578
+        },
+        "17000": {
+            "spb": 0.21978021978021978,
+            "blocks": 91,
+            "consensusTime": 0.004021111111111111,
+            "transactionsTime": 0.22298888888888888
+        },
+        "18000": {
+            "spb": 0.23255813953488372,
+            "blocks": 86,
+            "consensusTime": 0.004051764705882353,
+            "transactionsTime": 0.23654117647058823
+        },
+        "19000": {
+            "spb": 0.24691358024691357,
+            "blocks": 81,
+            "consensusTime": 0.004015525,
+            "transactionsTime": 0.25165
+        },
+        "20000": {
+            "spb": 0.2597402597402597,
+            "blocks": 77,
+            "consensusTime": 0.004098421052631577,
+            "transactionsTime": 0.2636842105263158
+        },
+        "21000": {
+            "spb": 0.2697402597402597,
+            "blocks": 77,
+            "consensusTime": 0.004108421052631577,
+            "transactionsTime": 0.2636842105263158
+        },
+        "22000": {
+            "spb": 0.2797402597402597,
+            "blocks": 77,
+            "consensusTime": 0.004138421052631577,
+            "transactionsTime": 0.2636842105263158
+        },
+        "23000": {
+            "spb": 0.2897402597402597,
+            "blocks": 77,
+            "consensusTime": 0.004268421052631577,
+            "transactionsTime": 0.2636842105263158
+        },
+        "24000": {
+            "spb": 0.2997402597402597,
+            "blocks": 77,
+            "consensusTime": 0.004328421052631577,
+            "transactionsTime": 0.2636842105263158
+        }
+    }
+}
