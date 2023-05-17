@@ -103,20 +103,6 @@ stellars_blocks = getAverageData(['results/stellar_20.json'] + [f'results/stella
 stellars_downgrade_blocks = getAverageData(['results/stellar_downgrade_20.json'] + [f'results/stellar_downgrade_20_{i}.json' for i in range(1, 6)] , getNodeByConsensusTime)
 dpos_blocks = getAverageData(['results/dpos_20.json'] + [f'results/dpos_20_{i}.json' for i in range(1, 6)] , getNodeByConsensusTime)
 
-
-# with open('results/stellar_20.json') as f:
-#     stellar = json.load(f)
-
-# with open('results/stellar_downgrade_20.json') as f:
-#     stellar_downgrade = json.load(f)
-
-# with open('results/dpos_20.json') as f:
-#     dpos = json.load(f)
-
-# xValues = np.array(list(map(lambda x: int(x), stellar['20'].keys())))
-# y1Values = list(map(lambda item: item['consensusTime'], stellar['20'].values()))
-# y2Values = list(map(lambda item: item['consensusTime'], stellar_downgrade['20'].values())) 
-# y3Values = list(map(lambda item: item['consensusTime'], dpos['20'].values())) 
 xvalues = np.array(list(map(lambda x: int(x), getJsonFile('results/stellar_20.json')['20'].keys())))
 
 df=pd.DataFrame({
