@@ -32,53 +32,33 @@ def renderPlot(df, xLabel, yLabel, chartName):
     plt.savefig('charts/%s.jpg' % chartName,  bbox_inches="tight")
     plt.clf()
 
+def getJsonFile(filename):
+    with open(filename) as f:
+        data = json.load(f)
+    return data
+
+def getAverageData(filenames, getArr):
+    sumList = None
+    for filename in filenames:
+        data = getJsonFile(filename)
+        filterData = getArr(data)
+        if(sumList == None):
+            sumList = filterData
+        else:
+            sumList = list(map(lambda x,y: x+y, sumList, filterData))
+    return list(map(lambda x: x / len(filenames), sumList))
+
 ########################################
 # Bloques by Nodes
 ########################################
-## Stellar
-with open('results/stellar_10.json') as f:
-    stellar = json.load(f)
+def getBlockByNode(data):
+    return list(map(lambda x: x['blocks'], data['10'].values()))
 
-stellars_blocks = list(map(lambda x: x['blocks'], stellar['10'].values())) 
+stellars_blocks = getAverageData(['results/stellar_10.json'] + [f'results/stellar_10_{i}.json' for i in range(1, 6)] , getBlockByNode) 
+stellars_downgrade_blocks = getAverageData(['results/stellar_downgrade_10.json'] + [f'results/stellar_downgrade_10_{i}.json' for i in range(1, 6)] , getBlockByNode)
+dpos_blocks = getAverageData(['results/dpos_10.json'] + [f'results/dpos_10_{i}.json' for i in range(1, 6)] , getBlockByNode)
 
-for i in range(1, 6):
-   with open(f'results/stellar_10_{i}.json') as f1:
-       stellar_temp = json.load(f1)
-       blocks_temp = list(map(lambda x: x['blocks'], stellar_temp['10'].values()))
-       stellars_blocks = list(map(lambda x,y: x+y, stellars_blocks, blocks_temp))
-stellars_blocks = list(map(lambda x: x / 6, stellars_blocks))
-
-
-## Stellar downgrade
-with open('results/stellar_downgrade_10.json') as f:
-    stellar_downgrade = json.load(f)
-
-stellars_downgrade_blocks = list(map(lambda x: x['blocks'], stellar_downgrade['10'].values())) 
-
-for i in range(1, 6):
-   with open(f'results/stellar_downgrade_10_{i}.json') as f1:
-       temp = json.load(f1)
-       blocks_temp = list(map(lambda x: x['blocks'], temp['10'].values()))
-       stellars_downgrade_blocks = list(map(lambda x,y: x+y, stellars_downgrade_blocks, blocks_temp))
-stellars_downgrade_blocks = list(map(lambda x: x / 6, stellars_downgrade_blocks))
-
-## DPOS
-
-with open('results/dpos_10.json') as f:
-    dpos = json.load(f)
-
-dpos_blocks = list(map(lambda x: x['blocks'], dpos['10'].values())) 
-
-for i in range(1, 6):
-   with open(f'results/dpos_10_{i}.json') as f1:
-       temp = json.load(f1)
-       blocks_temp = list(map(lambda x: x['blocks'], temp['10'].values()))
-       dpos_blocks = list(map(lambda x,y: x+y, dpos_blocks, blocks_temp))
-dpos_blocks = list(map(lambda x: x / 6, dpos_blocks))
-
-xvalues = np.array(list(map(lambda x: int(x), stellar['10'].keys())))
-
-
+xvalues = np.array(list(map(lambda x: int(x), getJsonFile('results/stellar_10.json')['10'].keys())))
 values = {
     'x_values': xvalues, 
     'y1_values': stellars_blocks, 
@@ -95,52 +75,75 @@ renderPlot(df, "Nodos", "Bloques", "Bloques_Nodos")
 # Blocks by Time
 ########################################
 
-with open('results/stellar_10-20-30-40-50-60-70-80-90-100.json') as f:
-    stellar = json.load(f)
+def getBlockByTime(data):
+    return list(map(lambda item: item['5000']['blocks'], data.values()))
 
-with open('results/stellar_downgrade_10-20-30-40-50-60-70-80-90-100.json') as f:
-    stellar_downgrade = json.load(f)
+stellars_blocks = getAverageData(['results/stellar_10-20-30-40-50-60-70-80-90-100.json'] + [f'results/stellar_10-20-30-40-50-60-70-80-90-100_{i}.json' for i in range(1, 6)] , getBlockByTime) 
+stellars_downgrade_blocks = getAverageData(['results/stellar_downgrade_10-20-30-40-50-60-70-80-90-100.json'] + [f'results/stellar_downgrade_10-20-30-40-50-60-70-80-90-100_{i}.json' for i in range(1, 6)] , getBlockByTime)
+dpos_blocks = getAverageData(['results/dpos_10-20-30-40-50-60-70-80-90-100.json'] + [f'results/dpos_10-20-30-40-50-60-70-80-90-100_{i}.json' for i in range(1, 6)] , getBlockByTime)
 
-with open('results/dpos_10-20-30-40-50-60-70-80-90-100.json') as f:
-    dpos = json.load(f)
-
-xValues = np.array(list(map(lambda x: int(x), stellar.keys())))
-y1Values = list(map(lambda item: item['5000']['blocks'], stellar.values()))
-y2Values = list(map(lambda item: item['5000']['blocks'], stellar_downgrade.values())) 
-y3Values = list(map(lambda item: item['5000']['blocks'], dpos.values()))
-df=pd.DataFrame({'x_values': xValues, 'y1_values': y1Values, 'y2_values': y2Values, 'y3_values': y3Values })
+xvalues = np.array(list(map(lambda x: int(x), getJsonFile('results/stellar_10-20-30-40-50-60-70-80-90-100.json').keys())))
+df=pd.DataFrame({
+    'x_values': xvalues, 
+    'y1_values': stellars_blocks, 
+    'y2_values': stellars_downgrade_blocks, 
+    'y3_values': dpos_blocks 
+})
 print(df)
 renderPlot(df, "Tiempo (min)", "Bloques", "Bloques_Tiempo")
 
 ########################################
 # Nodes by consensus time
 ########################################
-with open('results/stellar_20.json') as f:
-    stellar = json.load(f)
+def getNodeByConsensusTime(data):
+    return list(map(lambda item: item['consensusTime'], data['20'].values()))
 
-with open('results/stellar_downgrade_20.json') as f:
-    stellar_downgrade = json.load(f)
 
-with open('results/dpos_20.json') as f:
-    dpos = json.load(f)
+stellars_blocks = getAverageData(['results/stellar_20.json'] + [f'results/stellar_20_{i}.json' for i in range(1, 6)] , getNodeByConsensusTime) 
+stellars_downgrade_blocks = getAverageData(['results/stellar_downgrade_20.json'] + [f'results/stellar_downgrade_20_{i}.json' for i in range(1, 6)] , getNodeByConsensusTime)
+dpos_blocks = getAverageData(['results/dpos_20.json'] + [f'results/dpos_20_{i}.json' for i in range(1, 6)] , getNodeByConsensusTime)
 
-xValues = np.array(list(map(lambda x: int(x), stellar['20'].keys())))
-y1Values = list(map(lambda item: item['consensusTime'], stellar['20'].values()))
-y2Values = list(map(lambda item: item['consensusTime'], stellar_downgrade['20'].values())) 
-y3Values = list(map(lambda item: item['consensusTime'], dpos['20'].values())) 
-df=pd.DataFrame({'x_values': xValues, 'y1_values': y1Values, 'y2_values': y2Values, 'y3_values': y3Values })
+
+# with open('results/stellar_20.json') as f:
+#     stellar = json.load(f)
+
+# with open('results/stellar_downgrade_20.json') as f:
+#     stellar_downgrade = json.load(f)
+
+# with open('results/dpos_20.json') as f:
+#     dpos = json.load(f)
+
+# xValues = np.array(list(map(lambda x: int(x), stellar['20'].keys())))
+# y1Values = list(map(lambda item: item['consensusTime'], stellar['20'].values()))
+# y2Values = list(map(lambda item: item['consensusTime'], stellar_downgrade['20'].values())) 
+# y3Values = list(map(lambda item: item['consensusTime'], dpos['20'].values())) 
+xvalues = np.array(list(map(lambda x: int(x), getJsonFile('results/stellar_20.json')['20'].keys())))
+
+df=pd.DataFrame({
+    'x_values': xvalues, 
+    'y1_values': stellars_blocks, 
+    'y2_values': stellars_downgrade_blocks, 
+    'y3_values': dpos_blocks 
+})
 print(df)
 renderPlot(df, "Nodos", "Tiempo de consenso", "Nodos_Tiempo_Consenso")
 
 ########################################
 # Blocks by SPB
 ########################################
+def getBlockBySPB(data):
+    return list(map(lambda item: item['spb'], data['20'].values()))
 
-xValues = np.array(list(map(lambda x: int(x), stellar['20'].keys())))
-y1Values = list(map(lambda item: item['spb'], stellar['20'].values()))
-y2Values = list(map(lambda item: item['spb'], stellar_downgrade['20'].values())) 
-y3Values = list(map(lambda item: item['spb'], dpos['20'].values()))
+stellars_blocks = getAverageData(['results/stellar_20.json'] + [f'results/stellar_20_{i}.json' for i in range(1, 6)] , getBlockBySPB) 
+stellars_downgrade_blocks = getAverageData(['results/stellar_downgrade_20.json'] + [f'results/stellar_downgrade_20_{i}.json' for i in range(1, 6)] , getBlockBySPB)
+dpos_blocks = getAverageData(['results/dpos_20.json'] + [f'results/dpos_20_{i}.json' for i in range(1, 6)] , getBlockBySPB)
 
-df=pd.DataFrame({'x_values': xValues, 'y1_values': y1Values, 'y2_values': y2Values, 'y3_values': y3Values })
+
+df=pd.DataFrame({
+    'x_values': xvalues, 
+    'y1_values': stellars_blocks, 
+    'y2_values': stellars_downgrade_blocks, 
+    'y3_values': dpos_blocks
+})
 print(df)
 renderPlot(df, "Nodos", "SPB", "Nodos_SPB")
