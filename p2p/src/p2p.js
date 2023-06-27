@@ -1,87 +1,37 @@
 import crypto from 'crypto';
 import Swarm from 'discovery-swarm';
 import defaults from 'dat-swarm-defaults';
-// import chain from "./chain.js";
-import {CronJob} from 'cron';  
 import express from "express";
 import bodyParser from "body-parser";
 import { getPeerAndHttpPort } from "./helpers/server.js";
 import { Blockchain } from './models/Blockchain.js';
+import { MessageType } from './helpers/messages.js';
+import { Peer } from './helpers/messages.js';
 const CHANNEL_ID = 'blockchain_consensus';
 
 const peers = {};
 let connSeq = 0;
 
-
 let registeredMiners = [];
-let lastBlockMinedBy = null;
 
+const myPeer = new Peer(crypto.randomBytes(32)); 
+console.log('My PeerId: ' + myPeer.id.toString('hex'));
 
-let MessageType = {
-    REQUEST_BLOCK: 'requestBlock',
-    RECEIVE_NEXT_BLOCK: 'receiveNextBlock',
-    RECEIVE_NEW_BLOCK: 'receiveNewBlock',
-    REQUEST_ALL_REGISTER_MINERS: 'requestAllRegisterMiners',
-    REGISTER_MINER: 'registerMiner'
-};
-
-const myPeerId = crypto.randomBytes(32);
-console.log('myPeerId: ' + myPeerId.toString('hex'));
-
-// chain.createDb(myPeerId.toString('hex'));
 const blockchain = new Blockchain()
-
-const writeMessageToPeers = (type, data) => {
-    for (let id in peers) {
-        console.log('-------- writeMessageToPeers start -------- ');
-        console.log('type: ' + type + ', to: ' + id);
-        console.log('-------- writeMessageToPeers end ----------- ');
-        sendMessage(id, type, data);
-    }
-};
-
-const writeMessageToPeerToId = (toId, type, data) => {
-    for (let id in peers) {
-        if (id === toId) {
-            console.log('-------- writeMessageToPeerToId start -------- ');
-            console.log('type: ' + type + ', to: ' + toId);
-            console.log('-------- writeMessageToPeerToId end ----------- ');
-            sendMessage(id, type, data);
-        }
-    }
-};
-
-const sendMessage = (id, type, data) => {
-    peers[id].conn.write(JSON.stringify(
-        {
-            to: id,
-            from: myPeerId,
-            type: type,
-            data: data
-        }
-    ));
-};
-
 
 let initHttpServer = (http_port) => {
     let app = express();
     app.use(bodyParser.json());
 
-    app.get('/blocks', (req, res) => res.json(blockchain.chain));
-    // app.get('/getBlock', (req, res) => {
-    //     let blockIndex = req.query.index;
-    //     res.send(chain.blockchain[blockIndex]);
-    // });
-    // app.get('/getStoredBlock', (req, res) => {
-    //     let blockIndex = req.query.index;
-    //     chain.getDbBlock(blockIndex, res);
-    // });
-
-    app.listen(http_port, () => console.log('Listening http on port: ' + http_port));
+    app.get('/', (req, res) => res.json({
+        peerId: myPeer.id.toString('hex'),
+        blocks: blockchain.chain,
+    }));
+    app.listen(http_port, () => console.log(`Listening on http://localhost:${http_port}`));
 };
 
 const config = defaults({
-    id: myPeerId,
+    id: myPeer.id,
 });
 
 const swarm = Swarm(config);
@@ -98,6 +48,7 @@ const swarm = Swarm(config);
     swarm.on('connection', (conn, info) => {
         const seq = connSeq;
         const peerId = info.id.toString('hex');
+       
         console.log(`Connected #${seq} to peer: ${peerId}`);
         if (info.initiator) {
             try {
@@ -113,7 +64,7 @@ const swarm = Swarm(config);
             console.log(
                 'from: ' + peerId.toString('hex'),
                 'to: ' + peerId.toString(message.to),
-                'my: ' + myPeerId.toString('hex'),
+                'my: ' + myPeer.id.toString('hex'),
                 'type: ' + JSON.stringify(message.type)
             );
             console.log('----------- Received Message end -------------');
@@ -124,7 +75,7 @@ const swarm = Swarm(config);
                     let requestedIndex = (JSON.parse(JSON.stringify(message.data))).index;
                     let requestedBlock = blockchain.getBlock(requestedIndex);
                     if (requestedBlock)
-                        writeMessageToPeerToId(peerId.toString('hex'), MessageType.RECEIVE_NEXT_BLOCK, requestedBlock);
+                        myPeer.writeMessageToPeerToId(peers, peerId.toString('hex'), MessageType.RECEIVE_NEXT_BLOCK, requestedBlock);
                     else
                         console.log('No block found @ index: ' + requestedIndex);
                     console.log('-----------REQUEST_BLOCK-------------');
@@ -136,13 +87,13 @@ const swarm = Swarm(config);
                     console.log(JSON.stringify(blockchain));
                     let nextBlockIndex = blockchain.getLatestBlock().index + 1;
                     console.log('-- request next block @ index: ' + nextBlockIndex);
-                    writeMessageToPeers(MessageType.REQUEST_BLOCK, {index: nextBlockIndex});
+                    myPeer.writeMessageToPeers(peers, MessageType.REQUEST_BLOCK, {index: nextBlockIndex});
                     console.log('-----------RECEIVE_NEXT_BLOCK-------------');
                     break;
 
                 case MessageType.RECEIVE_NEW_BLOCK:
                     // consensus 
-                    if ( message.to === myPeerId.toString('hex') && message.from !== myPeerId.toString('hex')) {
+                    if ( message.to === myPeer.id.toString('hex') && message.from !== myPeer.id.toString('hex')) {
                         console.log('-----------RECEIVE_NEW_BLOCK------------- ' + message.to);
                         blockchain.addBlock(JSON.parse(JSON.stringify(message.data)));
                         console.log(JSON.stringify(blockchain));
@@ -152,7 +103,7 @@ const swarm = Swarm(config);
 
                 case MessageType.REQUEST_ALL_REGISTER_MINERS:
                     console.log('-----------REQUEST_ALL_REGISTER_MINERS------------- ' + message.to);
-                    writeMessageToPeers(MessageType.REGISTER_MINER, registeredMiners);
+                    myPeer.writeMessageToPeers(peers, MessageType.REGISTER_MINER, registeredMiners);
                     registeredMiners = JSON.parse(JSON.stringify(message.data));
                     console.log('-----------REQUEST_ALL_REGISTER_MINERS------------- ' + message.to);
                     break;
@@ -165,7 +116,6 @@ const swarm = Swarm(config);
                     console.log('-----------REGISTER_MINER------------- ' + message.to);
                     break;
             }
-
         });
 
         conn.on('close', () => {
@@ -191,41 +141,42 @@ const swarm = Swarm(config);
 
 
 setTimeout(function(){
-    writeMessageToPeers(MessageType.REQUEST_ALL_REGISTER_MINERS, null);
+    myPeer.writeMessageToPeers(peers, MessageType.REQUEST_ALL_REGISTER_MINERS, null);
 }, 5000);
 
 setTimeout(function(){
-    writeMessageToPeers(MessageType.REQUEST_BLOCK, {index: blockchain.getLastBlock().index+1});
+    myPeer.writeMessageToPeers(peers, MessageType.REQUEST_BLOCK, {index: blockchain.getLastBlock().index+1});
 }, 5000);
 
 setTimeout(function(){
-    registeredMiners.push(myPeerId.toString('hex'));
+    registeredMiners.push(myPeer.id.toString('hex'));
     console.log('----------Register my miner --------------');
     console.log(registeredMiners);
-    writeMessageToPeers(MessageType.REGISTER_MINER, registeredMiners);
+    myPeer.writeMessageToPeers(peers, MessageType.REGISTER_MINER, registeredMiners);
     console.log('---------- Register my miner --------------');
-}, 5000);
+}, 7000);
 
 
-const job = new CronJob('30 * * * * *', function() {
-    let index = 0;
+// const job = new CronJob('*/10 * * * * *', function() {
+//     // let index = 0;
 
-    if (lastBlockMinedBy) {
-        let newIndex = registeredMiners.indexOf(lastBlockMinedBy); 
-        index = ( newIndex+1 > registeredMiners.length-1) ? 0 : newIndex + 1;
-    }
+//     // if (lastBlockMinedBy) {
+//     //     let newIndex = registeredMiners.indexOf(lastBlockMinedBy); 
+//     //     index = ( newIndex+1 > registeredMiners.length-1) ? 0 : newIndex + 1;
+//     // }
 
-    lastBlockMinedBy = registeredMiners[index];
-    console.log('-- REQUESTING NEW BLOCK FROM: ' + registeredMiners[index] + ', index: ' + index);
-    console.log(JSON.stringify(registeredMiners));
-    if (registeredMiners[index] === myPeerId.toString('hex')) {
-        console.log('-----------create next block -----------------');
-        let newBlock = blockchain.createBlock(`dummy data generated by: ${myPeerId.toString('hex')}`);
-        blockchain.addBlock(newBlock);
-        console.log(JSON.stringify(newBlock));
-        writeMessageToPeers(MessageType.RECEIVE_NEW_BLOCK, newBlock);
-        console.log(JSON.stringify(blockchain));
-        console.log('-----------create next block -----------------');
-    }
-});
-job.start();
+//     // lastBlockMinedBy = registeredMiners[index];
+//     // console.log('-- REQUESTING NEW BLOCK FROM: ' + registeredMiners[index] + ', index: ' + index);
+//     // console.log(JSON.stringify(registeredMiners));
+//     // if (registeredMiners[index] === myPeerId.toString('hex')) {
+//     //     console.log('-----------create next block -----------------');
+        
+//     //     console.log('-----------create next block -----------------');
+//     // }
+//     console.log('-----------generating a new block-----------');
+//     let newBlock = blockchain.createBlock(`dummy data generated by: ${myPeerId.toString('hex')}`);
+//     console.log(JSON.stringify(newBlock));
+//     writeMessageToPeers(peers, MessageType.RECEIVE_NEW_BLOCK, newBlock);
+//     console.log(JSON.stringify(blockchain));
+// });
+// job.start();

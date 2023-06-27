@@ -24,6 +24,7 @@
   "description": "P2P Network blockchain",
   "main": "p2p.js",
   "scripts": {
+    "start": "node src/p2p.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "type":"module"
